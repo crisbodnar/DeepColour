@@ -1,16 +1,35 @@
 import Transformer
-matrix = [[1, 2, 9, 2,
-           2, 6, 3, 5,
-           6, 5, 6, 7],
-          [1, 2, 4, 4,
-           5, 4, 2, 1,
-           3, 3, 9, 0],
-          [1, 2, 3, 0,
-           5, 6, 2, 2,
-           3, 7, 7, 0]]
-threematrix = Transformer.reformatMatrix(matrix, len(matrix[0])/3)
-twomatrix = Transformer.grayscaleTransformMatrix(Transformer.averageTransform, threematrix)
-for i in range(len(twomatrix)):
-    gridmatrix = Transformer.desequentialize(twomatrix[i], 2)
-    print gridmatrix
-    print ""
+import cPickle
+import numpy
+
+path = '../MachineLearning/cifar-10-python/cifar-10-batches-py'
+
+
+def load_data(file_path):
+    fo = open(file_path, 'rb')
+    dict = cPickle.load(fo)
+    fo.close()
+    return dict['data']
+
+
+def load_data_from_directory(path):
+    from os import listdir
+    from os.path import isfile, join
+
+    # read the filenames of all the data batches
+    all_files = [join(path, f) for f in listdir(path) if isfile(join(path, f)) and f.startswith('data_')]
+
+    list_of_files = []
+    for file in all_files:
+        list_of_files.append(load_data(file))
+
+    # concatenate all the matrices
+    return numpy.concatenate(list_of_files)
+
+
+data = load_data_from_directory(path)
+
+threeDData = Transformer.reformatMatrix(data[:1000], len(data[0])/3)
+grayData = Transformer.grayscaleTransformMatrix(Transformer.luminosityTransform, threeDData)
+for i in range(len(grayData)):
+    matrixData = Transformer.desequentialize(grayData[i], 32)
