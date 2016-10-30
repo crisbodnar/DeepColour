@@ -1,8 +1,9 @@
 import Transformer
 import cPickle
 import numpy
-import MatrixToImg
-
+import MatrixImgConvertor
+from PIL import Image
+"""
 path = '../MachineLearning/cifar-10-python/cifar-10-batches-py'
 
 
@@ -48,4 +49,10 @@ for i in range(len(grayData)):
           #                str(threeDData[i][j*len(matrixData)+k][2])+ "\n")
            # fTrain.write("\n")
 fTarget.close()
-fTrain.close()
+fTrain.close()"""
+
+im = Image.open("image.jpg")
+a = MatrixImgConvertor.imageColourToMatrix(im)
+print a
+b = MatrixImgConvertor.imageGrayToMatrix(im)
+print b
