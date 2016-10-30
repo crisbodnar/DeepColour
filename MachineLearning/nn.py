@@ -1,14 +1,15 @@
 import tensorflow as tf
+import numpy as np
 
 #Read the data
 fin = open('train.txt', 'r')
 lines = fin.readlines()
-data = [[int(number) for number in line.split()] for line in lines] 
+data = [[float(number) for number in line.split()] for line in lines] 
 
 fin.close()
 fin = open('target.txt', 'r')
 lines = fin.readlines()
-target = [[(float(number) / 255 ) for number in line.split()] for line in lines] 
+target = [[(float(number) / 255) for number in line.split()] for line in lines] 
 
 num_examples = 60000
 data = data[:num_examples]
@@ -16,7 +17,7 @@ target = target[:num_examples]
 
 #Learning Parameters 
 learning_rate = 0.001
-training_epochs = 50
+training_epochs = 7
 batch_size = 100
 display_step = 1
 
@@ -44,6 +45,7 @@ def multilayer_perceptron(x, weights, biases):
     layer_3 = tf.nn.relu(layer_3)
 
     out_layer = tf.matmul(layer_3, weights['out']) + biases['out']
+    out_layer = tf.nn.l2_normalize(out_layer, 1)
     return out_layer
 
 #Set up layer weights and biases
@@ -65,14 +67,16 @@ biases = {
 pred = multilayer_perceptron(x, weights, biases)
 
 #Define loss and optimizer
-cost = tf.reduce_sum(tf.nn.l2_loss(tf.abs(tf.sub(pred, y))))
+cost = tf.reduce_mean(tf.nn.l2_loss(tf.abs(tf.sub(pred, y))))
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 #Init the variables
 init = tf.initialize_all_variables()
 
-#Start the training
+#Create a model saver
+saver = tf.train.Saver()
 
+#Start the training
 with tf.Session() as sess:
     sess.run(init)
 
@@ -101,3 +105,20 @@ with tf.Session() as sess:
                 "{:.9f}".format(avg_cost)
 
     print "Optimization finished!"
+
+    #Save the model after training
+    save_path = saver.save(sess, "model.ckpt")
+    print "Model saved in file %s" % save_path
+
+    #Try a prediction
+    out_tensor = multilayer_perceptron(data[:676], weights, biases)
+    liniarized_color_matrix = sess.run(out_tensor)
+
+    writer = open('color2d.txt', 'w')
+    for pixel in liniarized_color_matrix:
+        for color in pixel:
+            writer.write(str(int(255 * color)))
+            writer.write(' ')
+        writer.write('\r\n')    
+
+    writer.close()
