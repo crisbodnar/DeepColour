@@ -1,5 +1,4 @@
 import MatrixImgConvertor
-from random import randint
 #from PIL import Image
 
 matrix = []
