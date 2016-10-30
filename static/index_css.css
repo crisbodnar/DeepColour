@@ -12,10 +12,23 @@ body
     padding: 0 0 3em 0;
 }
 
+.bgd img
+{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    opacity: 0.9;
+    z-index: -1;
+
+    -webkit-filter: blur(4px);
+}
+
 h1
 {
     color: white;
-    font-size: 60px;
+    font-size: 100px;
 }
 
 a {
@@ -32,7 +45,6 @@ color: #722040;
 .button
 {
 	padding: 2rem 1.25rem;
-	background-color: #DFC8CA;
 }
 
 .js .inputfile {
@@ -46,14 +58,14 @@ color: #722040;
 
 .inputfile + label {
     max-width: 80%;
-    font-size: 1.25rem;
+    font-size: 2.3rem;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
-    padding: 0.625rem 1.25rem;
+    padding: 0.7rem 1.25rem;
 }
 
 .no-js .inputfile + label {
